@@ -42,7 +42,7 @@ $all = $opt.a -or $opt.all
 # load config
 $configRepo = get_config SCOOP_REPO
 if (!$configRepo) {
-    $configRepo = 'https://github.com/ScoopInstaller/Scoop'
+    $configRepo = 'https://github.com/Adrts/Scoop-Adrts-Modified-Version'
     set_config SCOOP_REPO $configRepo | Out-Null
 }
 
