@@ -184,6 +184,8 @@ function Sync-Bucket {
 
     $updatedFiles = [System.Collections.ArrayList]::Synchronized([System.Collections.ArrayList]::new())
     $removedFiles = [System.Collections.ArrayList]::Synchronized([System.Collections.ArrayList]::new())
+
+    $depth = get_config BUCKET_GIT_DEPTH 10
     if ($PSVersionTable.PSVersion.Major -ge 7) {
         # Parallel parameter is available since PowerShell 7
         $buckets | Where-Object { $_.valid } | ForEach-Object -ThrottleLimit 5 -Parallel {
@@ -195,7 +197,9 @@ function Sync-Bucket {
             $innerBucketLoc = Find-BucketDirectory $name
 
             $previousCommit = Invoke-Git -Path $bucketLoc -ArgumentList @('rev-parse', 'HEAD')
-            Invoke-Git -Path $bucketLoc -ArgumentList @('pull', '-q')
+            $branch = Invoke-Git -Path $bucketLoc -ArgumentList @('rev-parse', '--abbrev-ref', 'HEAD')
+            Invoke-Git -Path $bucketLoc -ArgumentList @('fetch', '--depth', $using:depth, 'origin', "+refs/heads/$branch`:refs/remotes/origin/$branch", '-q')
+            Invoke-Git -Path $bucketLoc -ArgumentList @('reset', '--hard', "origin/$branch", '-q')
             if ($using:Log) {
                 Invoke-GitLog -Path $bucketLoc -Name $name -CommitHash $previousCommit
             }
@@ -226,7 +230,9 @@ function Sync-Bucket {
             $innerBucketLoc = Find-BucketDirectory $name
 
             $previousCommit = Invoke-Git -Path $bucketLoc -ArgumentList @('rev-parse', 'HEAD')
-            Invoke-Git -Path $bucketLoc -ArgumentList @('pull', '-q')
+            $branch = Invoke-Git -Path $bucketLoc -ArgumentList @('rev-parse', '--abbrev-ref', 'HEAD')
+            Invoke-Git -Path $bucketLoc -ArgumentList @('fetch', '--depth', $depth, 'origin', "+refs/heads/$branch`:refs/remotes/origin/$branch", '-q')
+            Invoke-Git -Path $bucketLoc -ArgumentList @('reset', '--hard', "origin/$branch", '-q')
             if ($Log) {
                 Invoke-GitLog -Path $bucketLoc -Name $name -CommitHash $previousCommit
             }
