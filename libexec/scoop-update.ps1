@@ -49,7 +49,7 @@ if (!$configRepo) {
 # Find current update channel from config
 $configBranch = get_config SCOOP_BRANCH
 if (!$configBranch) {
-    $configBranch = 'master'
+    $configBranch = 'main'
     set_config SCOOP_BRANCH $configBranch | Out-Null
 }
 
