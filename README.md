@@ -15,5 +15,7 @@
 安装原版想换到这个版本可以
 ```
 scoop config SCOOP_REPO https://github.com/Adrts/SCOOP-Simplify
+scoop config SCOOP_BRANCH main
+scoop update
 ```
 我也不知道为什么会有这个版本，总之，重建了git仓库，删了一些编辑器相关不影响运行的东西，省下了大概15MB的空间。
