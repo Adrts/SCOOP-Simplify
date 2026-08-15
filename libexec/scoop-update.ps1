@@ -316,10 +316,12 @@ function update($app, $global, $quiet = $false, $independent, $suggested, $use_c
         $urls = script:url $manifest $architecture
 
         foreach ($url in $urls) {
+            $originalUrl = $url
+            $url = Invoke-UrlMirror -Url $url -PassThru
             Invoke-CachedDownload $app $version $url $null $manifest.cookie $true
 
             if ($check_hash) {
-                $manifest_hash = hash_for_url $manifest $url $architecture
+                $manifest_hash = hash_for_url $manifest $originalUrl $architecture
                 $source = cache_path $app $version $url
                 $ok, $err = check_hash $source $manifest_hash $(show_app $app $bucket)
 
@@ -329,7 +331,7 @@ function update($app, $global, $quiet = $false, $independent, $suggested, $use_c
                         # rm cached file
                         Remove-Item -Force $source
                     }
-                    if ($url.Contains('sourceforge.net')) {
+                    if ($originalUrl.Contains('sourceforge.net')) {
                         Write-Host -f yellow 'SourceForge.net is known for causing hash validation fails. Please try again before opening a ticket.'
                     }
                     abort $(new_issue_msg $app $bucket 'hash check failed')
