@@ -17,6 +17,6 @@
 
 ### 配置加速链接
 
-```bash
+```cmd
 scoop config github_mirror_url https://xxxxxx
 scoop config sourceforge_mirror_url https://xxxxxx
